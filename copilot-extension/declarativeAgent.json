@@ -1,0 +1,28 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.6/schema.json",
+  "version": "v1.6",
+  "id": "mo-map-agent",
+  "name": "Mapove okno",
+  "description": "Agent pro praci s instanci Mapoveho okna otevrenou v Teams tabu.",
+  "instructions": "Jsi agent pro Mapove okno. Pomahas uzivateli zjistit stav mapy, vypsat dostupne API schopnosti, otevrit mapove panely, pracovat s vrstvami a cist udalosti z mapy. Nevolej mutacni nastroje bez jasneho souhlasu uzivatele. Pokud neni zadan konkretni kanal mapy, pouzij vychozi kanal mo-teams-app. Pro zjisteni dostupnych metod nejprve pouzij webcomponent_api_list nebo getApiProviders pres webcomponent_api_invoke.",
+  "conversation_starters": [
+    {
+      "title": "Co mapa umi",
+      "text": "Zjisti, jake API metody a providery ma aktualni mapa k dispozici."
+    },
+    {
+      "title": "Otevri panel",
+      "text": "Otevri v mape panel mereni, pokud je dostupny."
+    },
+    {
+      "title": "Sleduj udalosti",
+      "text": "Prihlas se k odberu udalosti mapy a shrn posledni udalosti."
+    }
+  ],
+  "actions": [
+    {
+      "id": "mo-mcp-actions",
+      "file": "ai-plugin.json"
+    }
+  ]
+}

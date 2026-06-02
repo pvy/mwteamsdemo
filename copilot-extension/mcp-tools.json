@@ -1,0 +1,132 @@
+[
+  {
+    "name": "webcomponent_api_list",
+    "description": "Returns callable methods and readable properties exposed by the map-window-app public API.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string",
+          "description": "Optional SignalR session id. Defaults to mo-teams-app."
+        }
+      }
+    }
+  },
+  {
+    "name": "webcomponent_api_get",
+    "description": "Reads a property value from the map-window-app public API.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "property": {
+          "type": "string",
+          "description": "Name of the API property to read."
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Optional SignalR session id. Defaults to mo-teams-app."
+        }
+      },
+      "required": ["property"]
+    }
+  },
+  {
+    "name": "webcomponent_api_invoke",
+    "description": "Invokes a method from the map-window-app public API. This can change the open map state.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "Name of the API method to call."
+        },
+        "args": {
+          "type": "array",
+          "description": "Positional JSON-compatible method arguments.",
+          "items": {}
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Optional SignalR session id. Defaults to mo-teams-app."
+        }
+      },
+      "required": ["method"]
+    }
+  },
+  {
+    "name": "webcomponent_dom_event_subscribe",
+    "description": "Starts capturing selected DOM events emitted by map-window-app. Use * to capture all.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "eventName": {
+          "type": "string",
+          "description": "Exact event name or * for all events."
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Optional SignalR session id. Defaults to mo-teams-app."
+        }
+      },
+      "required": ["eventName"]
+    }
+  },
+  {
+    "name": "webcomponent_dom_event_unsubscribe",
+    "description": "Stops capturing selected DOM events.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "eventName": {
+          "type": "string",
+          "description": "Exact event name or *."
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Optional SignalR session id. Defaults to mo-teams-app."
+        }
+      },
+      "required": ["eventName"]
+    }
+  },
+  {
+    "name": "webcomponent_dom_event_list",
+    "description": "Lists observed event names, current subscriptions and queue size.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string",
+          "description": "Optional SignalR session id. Defaults to mo-teams-app."
+        }
+      }
+    }
+  },
+  {
+    "name": "webcomponent_dom_event_pull",
+    "description": "Reads captured events from the map-window-app MCP event queue.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "eventName": {
+          "type": "string",
+          "description": "Optional exact event name filter."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Maximum number of events to return."
+        },
+        "clear": {
+          "type": "boolean",
+          "description": "Whether returned events should be removed from the queue."
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Optional SignalR session id. Defaults to mo-teams-app."
+        }
+      }
+    }
+  }
+]

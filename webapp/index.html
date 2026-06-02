@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="cs" translate="no" style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Teams host page for map-window-app with MCP diagnostics."
+    />
+    <title>Mapove okno - Teams</title>
+    <script
+      src="https://res.cdn.office.net/teams-js/2.47.0/js/MicrosoftTeams.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+    <script defer="" src="./config.js"></script>
+    <script defer="" src="./bootstrap.js"></script>
+    <script defer="" src="./mcp-client.js"></script>
+    <script defer="" src="./signalr-client.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --line: #c9d4e4;
+        --text: #1d2533;
+        --muted: #5a6678;
+        --accent: #2369c9;
+        --accent-strong: #174f9d;
+        --danger: #a03434;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          "Segoe UI",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+      }
+
+      body {
+        display: grid;
+        grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+        min-height: 100%;
+      }
+
+      aside {
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      main {
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+      }
+
+      header,
+      section {
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      h2 {
+        font-size: 14px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      p {
+        margin: 8px 0 0;
+        color: var(--muted);
+      }
+
+      button {
+        min-height: 36px;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #fff;
+        border-radius: 6px;
+        padding: 0 12px;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        background: #fff;
+        color: var(--accent-strong);
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+        margin-top: 12px;
+      }
+
+      label {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 8px;
+        font: 13px ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+
+      textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+
+      pre {
+        margin: 12px 0 0;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #f8fafc;
+        color: #182235;
+        overflow: auto;
+        white-space: pre-wrap;
+        font: 12px ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--danger);
+      }
+
+      .dot.ok {
+        background: #218456;
+      }
+
+      map-window-app {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+        background: #dfe8f5;
+      }
+
+      @media (max-width: 900px) {
+        body {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto minmax(480px, 1fr);
+        }
+
+        aside {
+          border-right: 0;
+        }
+
+        map-window-app {
+          min-height: 480px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <aside>
+      <header>
+        <h1>Mapove okno v Teams</h1>
+        <div class="status">
+          <span id="bundle-dot" class="dot"></span>
+          <span id="bundle-status">Cekam na konfiguraci...</span>
+        </div>
+        <div class="status">
+          <span id="mcp-dot" class="dot"></span>
+          <span id="mcp-status">Inicializace...</span>
+        </div>
+      </header>
+
+      <section>
+        <h2>Runtime</h2>
+        <pre id="runtime-info">{}</pre>
+        <div class="actions">
+          <button id="btn-connect">Pripojit MCP</button>
+          <button id="btn-signalr" class="secondary">Pripojit SignalR</button>
+          <button id="btn-tools" class="secondary">Tools</button>
+          <button id="btn-providers" class="secondary">API providers</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Volani API</h2>
+        <div class="field">
+          <label for="method">Metoda WebComponentApi</label>
+          <input id="method" value="getApiProviders" />
+        </div>
+        <div class="field">
+          <label for="args">Argumenty jako JSON pole</label>
+          <textarea id="args">[]</textarea>
+        </div>
+        <div class="actions">
+          <button id="btn-invoke">Zavolat pres MCP</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Eventy</h2>
+        <div class="actions">
+          <button id="btn-subscribe" class="secondary">Subscribe *</button>
+          <button id="btn-pull" class="secondary">Pull events</button>
+        </div>
+        <pre id="output">Cekam na mapu...</pre>
+      </section>
+    </aside>
+
+    <main>
+      <map-window-app
+        id="mo-teams-map"
+        data-mcp-channel="mo-teams-app"
+      ></map-window-app>
+    </main>
+  </body>
+</html>

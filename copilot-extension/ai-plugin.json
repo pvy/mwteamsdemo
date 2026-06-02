@@ -1,0 +1,177 @@
+{
+  "schema_version": "v2.4",
+  "name_for_human": "Mapove okno",
+  "namespace": "MOMap",
+  "description_for_human": "Ovlada Mapove okno pres SignalR runtime.",
+  "description_for_model": "Use this plugin when the user wants to inspect or control an active map-window-app instance. The Teams webapp connects to Azure SignalR and forwards tool requests to the browser-side Mapove okno MCP plugin. Use webcomponent_api_list before invoking unknown methods. Use webcomponent_dom_event_subscribe and webcomponent_dom_event_pull when the user asks what happened in the map. Mutating calls through webcomponent_api_invoke can change the map state and should be used only when the user requests the action.",
+  "functions": [
+    {
+      "name": "webcomponent_api_list",
+      "description": "Lists callable methods and readable properties exposed by the map-window-app public API.",
+      "returns": {
+        "type": "string",
+        "description": "JSON object with methods and properties."
+      },
+      "capabilities": {
+        "security_info": {
+          "data_handling": ["GetPrivateData"]
+        }
+      }
+    },
+    {
+      "name": "webcomponent_api_get",
+      "description": "Reads a property from the map-window-app public API.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Optional SignalR session id. Defaults to mo-teams-app."
+          },
+          "property": {
+            "type": "string",
+            "description": "Name of the public API getter property."
+          }
+        },
+        "required": ["property"]
+      },
+      "returns": {
+        "type": "string",
+        "description": "JSON object with the property value."
+      },
+      "capabilities": {
+        "security_info": {
+          "data_handling": ["GetPrivateData"]
+        }
+      }
+    },
+    {
+      "name": "webcomponent_api_invoke",
+      "description": "Invokes a method from the map-window-app public API with JSON-compatible arguments.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Optional SignalR session id. Defaults to mo-teams-app."
+          },
+          "method": {
+            "type": "string",
+            "description": "Name of the public API method to call."
+          },
+          "args": {
+            "type": "array",
+            "description": "JSON-compatible positional arguments.",
+            "items": {
+              "type": "string",
+              "description": "One JSON-serialized argument value. The SignalR runtime must decode these before calling the browser MCP tool."
+            }
+          }
+        },
+        "required": ["method"]
+      },
+      "returns": {
+        "type": "string",
+        "description": "JSON object with method result or error."
+      },
+      "capabilities": {
+        "confirmation": {
+          "type": "AdaptiveCard",
+          "title": "Zavolat API Mapoveho okna?",
+          "body": "Tato akce muze zmenit stav otevrene mapy.",
+          "isNonConsequential": false
+        },
+        "security_info": {
+          "data_handling": ["GetPrivateData", "ResourceStateUpdate"]
+        }
+      }
+    },
+    {
+      "name": "webcomponent_dom_event_subscribe",
+      "description": "Subscribes the SignalR runtime to DOM events emitted by map-window-app.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Optional SignalR session id. Defaults to mo-teams-app."
+          },
+          "eventName": {
+            "type": "string",
+            "description": "Exact event name or * for all events."
+          }
+        },
+        "required": ["eventName"]
+      },
+      "returns": {
+        "type": "string",
+        "description": "JSON object with subscribed event names."
+      },
+      "capabilities": {
+        "security_info": {
+          "data_handling": ["GetPrivateData"]
+        }
+      }
+    },
+    {
+      "name": "webcomponent_dom_event_pull",
+      "description": "Reads captured events from the map-window-app MCP event queue.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Optional SignalR session id. Defaults to mo-teams-app."
+          },
+          "eventName": {
+            "type": "string",
+            "description": "Optional exact event name filter."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of events to return."
+          },
+          "clear": {
+            "type": "boolean",
+            "description": "Whether returned events should be removed from the queue."
+          }
+        }
+      },
+      "returns": {
+        "type": "string",
+        "description": "JSON object with captured event entries."
+      },
+      "capabilities": {
+        "security_info": {
+          "data_handling": ["GetPrivateData"]
+        }
+      }
+    }
+  ],
+  "runtimes": [
+    {
+      "type": "RemoteMCPServer",
+      "auth": {
+        "type": "None"
+      },
+      "spec": {
+        "url": "https://example.com/teams/copilot-extension/mcp",
+        "mcp_tool_description": {
+          "file": "mcp-tools.json"
+        }
+      }
+    }
+  ],
+  "capabilities": {
+    "conversation_starters": [
+      {
+        "title": "Dostupne schopnosti mapy",
+        "text": "Jake metody a API providery ma aktualni mapa k dispozici?"
+      },
+      {
+        "title": "Posledni udalosti",
+        "text": "Zobraz posledni udalosti z mapy."
+      }
+    ]
+  }
+}

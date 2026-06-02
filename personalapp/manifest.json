@@ -1,0 +1,42 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.25/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.25",
+  "version": "0.1.0",
+  "id": "a49b459e-7a6a-4ceb-b6d4-3e0136af0cc8",
+  "developer": {
+    "name": "Replace with organization name",
+    "websiteUrl": "https://example.com",
+    "privacyUrl": "https://example.com/privacy",
+    "termsOfUseUrl": "https://example.com/terms"
+  },
+  "name": {
+    "short": "MO Teams",
+    "full": "Mapove okno Teams prototype"
+  },
+  "description": {
+    "short": "Mapove okno jako Teams personal tab.",
+    "full": "Prototyp Microsoft Teams personal app, ktery hostuje map-window-app a pripravuje MCP kanal pro agentni integraci."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#2369C9",
+  "staticTabs": [
+    {
+      "entityId": "mo-map",
+      "name": "Mapa",
+      "contentUrl": "https://example.com/teams/webapp/index.html",
+      "websiteUrl": "https://example.com/teams/webapp/index.html",
+      "scopes": ["personal"]
+    }
+  ],
+  "validDomains": [
+    "example.com",
+    "*.example.com",
+    "cdn.jsdelivr.net",
+    "dev.geo-portal.cz",
+    "mwws.service.signalr.net",
+    "res.cdn.office.net"
+  ]
+}
