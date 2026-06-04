@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check webapp/bootstrap.js && node --check webapp/config.js && node --check webapp/signalr-client.js && node --check webapp/mcp-client.js && node --check scripts/build-personal-app.mjs",
+    "check": "node --check webapp/demo/bootstrap.js && node --check webapp/demo/config.js && node --check webapp/demo/signalr-client.js && node --check webapp/demo/mcp-client.js && node --check scripts/build-personal-app.mjs",
     "package:personal": "node scripts/build-personal-app.mjs",
     "serve": "npx --yes http-server webapp -p 8052 -c-1"
   },

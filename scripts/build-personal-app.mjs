@@ -4,9 +4,7 @@ import path from "node:path";
 import process from "node:process";
 
 const rootDir = process.cwd();
-const sourceDir = path.join(rootDir, "personalapp");
-const distDir = path.join(rootDir, "dist", "personalapp");
-const packagePath = path.join(rootDir, "dist", "mo-teams-personalapp.zip");
+const DEFAULT_APP = "demo";
 
 const args = process.argv.slice(2);
 const options = new Map();
@@ -26,6 +24,26 @@ for (let index = 0; index < args.length; index += 1) {
 
 const readOption = (name, envName, fallback = "") =>
   options.get(name) || process.env[envName] || fallback;
+
+const normalizeAppName = (value) => {
+  const appName = String(value || "").trim();
+  if (!/^[a-z0-9][a-z0-9_-]*$/i.test(appName)) {
+    throw new Error(
+      `Nazev aplikace musi byt bezpecny nazev adresare, zadano: ${value}`,
+    );
+  }
+
+  return appName;
+};
+
+const appName = normalizeAppName(readOption("app", "TEAMS_APP", DEFAULT_APP));
+const sourceDir = path.join(rootDir, "personalapp", appName);
+const distDir = path.join(rootDir, "dist", "personalapp", appName);
+const packagePath = path.join(
+  rootDir,
+  "dist",
+  `mo-teams-${appName}-personalapp.zip`,
+);
 
 const requireHttpsUrl = (value, label) => {
   let url;
@@ -72,16 +90,24 @@ const cleanDomain = (value) => {
 const copyPackageFiles = () => {
   fs.rmSync(distDir, { recursive: true, force: true });
   fs.mkdirSync(distDir, { recursive: true });
-  fs.copyFileSync(path.join(sourceDir, "color.png"), path.join(distDir, "color.png"));
+  fs.copyFileSync(
+    path.join(sourceDir, "color.png"),
+    path.join(distDir, "color.png"),
+  );
   fs.copyFileSync(
     path.join(sourceDir, "outline.png"),
     path.join(distDir, "outline.png"),
   );
 };
 
-const manifest = JSON.parse(
-  fs.readFileSync(path.join(sourceDir, "manifest.json"), "utf8"),
-);
+const manifestPath = path.join(sourceDir, "manifest.json");
+if (!fs.existsSync(manifestPath)) {
+  throw new Error(
+    `Neexistuje personal app sablona pro aplikaci '${appName}': ${sourceDir}`,
+  );
+}
+
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 
 const appUrl = requireHttpsUrl(
   readOption("app-url", "TEAMS_APP_URL"),
@@ -178,5 +204,6 @@ execFileSync(
 );
 
 console.log(`Teams app package: ${packagePath}`);
+console.log(`App: ${appName}`);
 console.log(`Content URL: ${appUrl.href}`);
 console.log(`Valid domains: ${manifest.validDomains.join(", ")}`);

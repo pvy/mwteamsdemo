@@ -26,8 +26,8 @@
     {
       "entityId": "mo-map",
       "name": "Mapa",
-      "contentUrl": "https://example.com/teams/webapp/index.html",
-      "websiteUrl": "https://example.com/teams/webapp/index.html",
+      "contentUrl": "https://example.com/demo/",
+      "websiteUrl": "https://example.com/demo/",
       "scopes": ["personal"]
     }
   ],

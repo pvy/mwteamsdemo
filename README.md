@@ -2,33 +2,35 @@
 
 Tento adresar obsahuje statickou Microsoft Teams personal aplikaci pro
 `map-window-app`. Teams hostuje jen iframe s HTTPS URL; vlastni logika mapy se
-nacita z konfigurovatelneho webcomponent bundle.
+nacita z konfigurovatelneho webcomponent bundle. Projekt podporuje vice Teams
+aplikaci vedle sebe na stejne domene pres ruzne podcesty.
 
 ## Struktura
 
-- `personalapp/` - sablona obsahu ZIP balicku pro upload do Teams jako aplikace:
-  `manifest.json`, `color.png`, `outline.png`.
-- `webapp/` - webova aplikace hostujici `map-window-app`.
-- `webapp/config.js` - vychozi runtime konfigurace bundle URL, mapovych atributu
-  a SignalR endpointu.
+- `personalapp/<app>/` - sablona obsahu ZIP balicku pro upload do Teams jako
+  aplikace: `manifest.json`, `color.png`, `outline.png`.
+- `webapp/<app>/` - webova aplikace hostujici `map-window-app`.
+- `webapp/<app>/config.js` - vychozi runtime konfigurace bundle URL, mapovych
+  atributu a SignalR endpointu.
 - `scripts/build-personal-app.mjs` - vygeneruje nahratelny Teams ZIP balicek do
-  `dist/mo-teams-personalapp.zip`.
+  `dist/mo-teams-<app>-personalapp.zip`.
 - `copilot-extension/` - skeleton deklarativniho agenta; komunikacni runtime
   vrstva je SignalR hub.
 
 ## Webapp
 
-Stranka `webapp/index.html` nacita webcomponent bundle z `webapp/config.js`.
+Stranka `webapp/demo/index.html` nacita webcomponent bundle z
+`webapp/demo/config.js`.
 Vychozi hodnota je:
 
 ```text
-https://dev.geo-portal.cz/test_mo8052/bundle.js
+https://dev.geo-portal.cz/mo_lcr_integration/1.7.16.2606031548/bundle.js
 ```
 
 URL lze prepsat bez rebuildovani:
 
 ```text
-https://<hosting>/teams/webapp/index.html?bundle=https%3A%2F%2Fdev.geo-portal.cz%2Ftest_mo8052%2Fbundle.js
+https://<hosting>/demo/?bundle=https%3A%2F%2Fdev.geo-portal.cz%2Fmo_lcr_integration%2F1.7.16.2606031548%2Fbundle.js
 ```
 
 Vychozi `bundleType` je `module`, protoze aktualni build webcomponenty pouziva
@@ -71,7 +73,7 @@ npm run serve
 Pak otevri:
 
 ```text
-http://127.0.0.1:8052
+http://127.0.0.1:8052/demo/
 ```
 
 Do Teams je potreba webapp vystavit na HTTPS URL.
@@ -82,14 +84,15 @@ Po vystaveni `webapp/` na HTTPS URL vygeneruj ZIP:
 
 ```bash
 npm run package:personal -- \
-  --app-url https://<hosting>/teams/webapp/index.html \
-  --bundle-url https://dev.geo-portal.cz/test_mo8052/bundle.js
+  --app demo \
+  --app-url https://witty-plant-03eae4c03.7.azurestaticapps.net/demo/ \
+  --bundle-url https://dev.geo-portal.cz/mo_lcr_integration/1.7.16.2606031548/bundle.js
 ```
 
 Vystup:
 
 ```text
-dist/mo-teams-personalapp.zip
+dist/mo-teams-demo-personalapp.zip
 ```
 
 Ten nahraj v Teams jako custom app. Build skript doplni:
@@ -100,6 +103,7 @@ Ten nahraj v Teams jako custom app. Build skript doplni:
 
 Volitelne parametry:
 
+- `--app demo` - vybira sablonu z `personalapp/<app>/`, default `demo`
 - `--bundle-type module`
 - `--configs <value>`
 - `--owc <value>`
@@ -110,17 +114,31 @@ Volitelne parametry:
 - `--signalr-auto-connect true`
 - `--valid-domains domena1,domena2`
 
-Stejne hodnoty lze predat pres env promene `TEAMS_APP_URL`,
+Stejne hodnoty lze predat pres env promene `TEAMS_APP`, `TEAMS_APP_URL`,
 `MAP_BUNDLE_URL`, `MAP_BUNDLE_TYPE`, `MAP_CONFIGS`, `MAP_OWC`, `MAP_LAYOUT`,
 `MAP_PLUGINS`, `MAP_CHANNEL`, `SIGNALR_URL`, `SIGNALR_AUTO_CONNECT` a
 `VALID_DOMAINS`.
+
+## Dalsi aplikace
+
+Pro dalsi Teams aplikaci zaloz dve slozky se stejnym nazvem:
+
+```text
+webapp/<nova-aplikace>/
+personalapp/<nova-aplikace>/
+```
+
+Na web hosting se nasazuje cely adresar `webapp/`, takze aplikace bezi napr. na
+`https://witty-plant-03eae4c03.7.azurestaticapps.net/<nova-aplikace>/`.
+Do Teams se nahrava ZIP vygenerovany pro odpovidajici sablonu
+`personalapp/<nova-aplikace>/`.
 
 ## MCP a SignalR
 
 Browserova cast umi komunikovat dvouvrstve:
 
 1. `map-window-app` expose-uje in-page MCP server pres `window.postMessage`.
-2. `webapp/signalr-client.js` se pripoji na SignalR a tool requesty preposila
+2. `webapp/<app>/signalr-client.js` se pripoji na SignalR a tool requesty preposila
    do lokalniho MCP serveru mapy.
 
 Default SignalR endpoint v konfiguraci:
@@ -181,7 +199,7 @@ Payload odpovedi:
 ```
 
 Do ZIP balicku pro sideload patri obsah adresare vygenerovaneho
-`dist/personalapp/`:
+`dist/personalapp/<app>/`:
 
 ```text
 manifest.json

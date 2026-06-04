@@ -1,5 +1,5 @@
 window.moTeamsConfig = {
-  bundleUrl: "https://dev.geo-portal.cz/test_mo8052/bundle.js",
+  bundleUrl: "https://dev.geo-portal.cz/mo_lcr_integration/1.7.16.2606031548/bundle.js",
   bundleType: "module",
   map: {
     id: "mo-teams-map",
