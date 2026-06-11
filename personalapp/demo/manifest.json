@@ -32,11 +32,25 @@
     }
   ],
   "validDomains": [
-    "example.com",
     "*.example.com",
+    "ags.cuzk.cz",
     "cdn.jsdelivr.net",
+    "cz-services.tmapserver.cz",
+    "demo.geo-portal.cz",
     "dev.geo-portal.cz",
+    "example.com",
+    "geoportal-orto.cuzk.cz",
+    "geoportal-zm.cuzk.cz",
+    "geoportal.cuzk.cz",
+    "geoportal.gov.cz",
+    "gis.nature.cz",
+    "mapy2.jmk.cz",
     "mwws.service.signalr.net",
-    "res.cdn.office.net"
+    "res.cdn.office.net",
+    "sampleservices.luciad.com",
+    "services.cuzk.cz",
+    "test.geo-portal.cz",
+    "test.gwm.dtmz.spravazeleznic.cz",
+    "test.ws.geoportal.spravazeleznic.cz"
   ]
 }
